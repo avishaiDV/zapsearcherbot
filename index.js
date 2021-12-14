@@ -54,7 +54,7 @@ bot.on("inline_query", async ctx => {
                 name: p?.children[1]?.children[0]?.children[0]?.getAttribute("aria-label"),
                 image: p?.children[0]?.children[1]?.children[0]?.getAttribute("src")
             }
-        }).filter(({link}) => link.includes("model.aspx") == true);
+        }).filter(({link}) => link?.includes("model.aspx") == true);
 
         ctx.answerInlineQuery(arr.map((item, index) => {
             const { link, name, image } = item;
