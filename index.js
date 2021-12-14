@@ -1,4 +1,4 @@
-const {Telegraf} = require("telegraf");
+const { Telegraf } = require("telegraf");
 require("dotenv").config();
 const fetch = require("node-fetch");
 const jsdom = require("jsdom");
@@ -23,57 +23,54 @@ bot.command('start', ctx => {
 bot.command("search", (ctx) => {
     let text = ctx?.message?.text?.split(" ");
     text?.splice(0, 1);
-     if(text.length) {
-         text = text.join(" ");
-     }
+    if (text.length) {
+        text = text.join(" ");
+    }
 
-     ctx.reply(`לתוצאות חיפוש עבור *${text}*, לחץ על הכפתור למטה!`, {
-         reply_markup: {
-             inline_keyboard:[
-                 [{
+    ctx.reply(`לתוצאות חיפוש עבור *${text}*, לחץ על הכפתור למטה!`, {
+        reply_markup: {
+            inline_keyboard: [
+                [{
                     text: "לחץ כאן!", switch_inline_query_current_chat: String(text)
-             }]
+                }]
             ]
-         },
-         parse_mode: "Markdown"
-     },
-     )
+        },
+        parse_mode: "Markdown"
+    },
+    )
 })
 
 bot.on("inline_query", async ctx => {
     const query = ctx?.inlineQuery?.query;
-    if(!query) return;
-    try{
+    if (!query) return;
+    try {
         const req = await fetch("https://www.zap.co.il/search.aspx?keyword=" + query);
         const res = await req?.text();
         const dom = new JSDOM(res);
         const document = dom?.window?.document;
-        let arr = [];
-        document.querySelectorAll("[data-model-id]").forEach(p => {
-        const obj = {
-            link: p?.children[1]?.children[0]?.children[0]?.getAttribute("href"),
-            name: p?.children[1]?.children[0]?.children[0]?.getAttribute("aria-label"),
-            image: p?.children[0]?.children[1]?.children[0]?.getAttribute("src")
-        }
-        arr.push(obj);
-        });
-        arr = arr.filter(({link}) => link?.includes("model.aspx") == true)
-        
+        let arr = Array.from(document.querySelectorAll("[data-model-id]")).map(p => {
+            return {
+                link: p?.children[1]?.children[0]?.children[0]?.getAttribute("href"),
+                name: p?.children[1]?.children[0]?.children[0]?.getAttribute("aria-label"),
+                image: p?.children[0]?.children[1]?.children[0]?.getAttribute("src")
+            }
+        }).filter(({link}) => link.includes("model.aspx") == true);
+
         ctx.answerInlineQuery(arr.map((item, index) => {
-            const { link, name, image} = item;
+            const { link, name, image } = item;
             return {
                 type: "article",
                 id: String(index),
-                title: name, 
+                title: name,
                 input_message_content: {
                     message_text: `${name} \n https://zap.co.il${link}`
                 },
                 thumb_url: image
-        }
+            }
 
         }))
-    
-    } catch(error) {
+
+    } catch (error) {
         console.error(error)
     }
 });
