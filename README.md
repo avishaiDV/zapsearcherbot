@@ -5,6 +5,9 @@ A simple Inline-Telegram bot that search products on [Zap](https://zap.co.il).
 Try our bot on Telegram: [@zapsearcherbot](https://t.me/@zapsearcherbot)!
 <br />
 Please star this repository if you liked my work.
+<br /> 
+
+<img src="https://image.prntscr.com/image/847fFdhbQiOJUULQcztzQw.png" />
 
 # Run this bot
 1.  <code>git clone https://github.com/avishaiDV/zapsearcherbot</code>
